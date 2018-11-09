@@ -1,0 +1,23 @@
+{
+  "name": "kepi",
+  "version": "0.1.0",
+  "description": "lightweight HTTP headers",
+  "main": "kepi.js",
+  "scripts": {
+    "test": "nyc --reporter=lcov tape test/test.js",
+    "coverage": "nyc --reporter=text-lcov report | coveralls"
+  },
+  "keywords": [
+    "HTTP",
+    "headers",
+    "security",
+    "response"
+  ],
+  "devDependencies": {
+    "nyc": "^11.2.0",
+    "tape": "^4.6",
+    "coveralls": "^3.0"
+  },
+  "author": "Morgan Conrad <morgan@morganconrad.com> (http://morganconrad.com/)",
+  "license": "MIT"
+}
