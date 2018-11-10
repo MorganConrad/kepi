@@ -22,17 +22,24 @@
 
 ### Example Configuration
 
+Simplest is to have as much as possible in a constant object
+
     const Kepi = require('kepi');
 
     let kepi = Kepi({
-      'X-Powered-By': 'super duper roll your own',
-      "X-XSS-Protection": {
-        "1": [],
-        "mode=block": [],
+      'X-Powered-By': 'super duper system',
+      'Content-Type': ['text/html', 'charset=utf-8']
+      'Feature-Policy': {
+        vibrate: "'none'",
+        geolocation: "'self'",
       },
     });
-    kepi.accessControl.allowMethods().add('PUT', 'POST');
 
+But sometimes you need to add stuff dynamically
+
+    let methodArray = [ insert methods you allow here ]
+    kepi.accessControl.allowMethods().add(...methodArray);
+    kepi.header('Expires').set(Date.now() + 60*60*1000);  // good for one hour
 
 ### In roll your own code
 

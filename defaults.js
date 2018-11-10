@@ -25,7 +25,7 @@ const DEFAULTS = {
     "Public-Key-Pins": "Value",
     "Referrer-Policy": "Value",
     "Set-Cookie": "List;",
-    "Strict-Transport-Security": "Policies",
+    "Strict-Transport-Security": "List;",
     "Tk": "Value",
     "Trailer": "Value",
     "Transfer-Encoding": "Value",
@@ -39,7 +39,7 @@ const DEFAULTS = {
     "X-Frame-Options": "Value",
     "X-Permitted-Cross-Domain-Policies": "Value",
     "X-Powered-By": "Value",
-    "X-XSS-Protection": "Policies",
+    "X-XSS-Protection": "List;",
 
     "Access-Control-Allow-Credentials": "Value",
     "Access-Control-Allow-Headers": "List,",
@@ -56,16 +56,10 @@ const DEFAULTS = {
     "X-Permitted-Cross-Domain-Policies": "'none'",
     "X-DNS-Prefetch-Control": "off",
     "X-Frame-Options": "SAMEORIGIN",
-    "Strict-Transport-Security": {
-      "max-age=5184000": [],
-      includeSubDomains: [],
-    },
+    "Strict-Transport-Security": ["max-age=5184000", "includeSubDomains"],
     "X-Download-Options": "noopen",
     "Content-Type-Options": "nosniff",
-    "X-XSS-Protection": {
-      "1": [],
-      "mode=block": [],
-    },
+    "X-XSS-Protection": [1, "mode=block"],
   },
 
   NICKNAMES: {

@@ -161,16 +161,16 @@ test('rawdata', function(t) {
   let kepi = Kepi({
     simpleHeader: ['bar'],
     listHeader: [1,2,3],
-    directivesHeader: {
-      d1: "d1_value",
-      d2: ["d2a", "d2b"]
-    }
+    'Feature-Policy': {
+      vibrate: "'none'",
+      geolocation: "'self'",
+    },
   });
   let res = mockResponse();
 
   kepi.middleware()(null, res, () => null);
   // kepi.applyTo(res);
-  t.equals(res.toString(), '{"simpleHeader":"bar","listHeader":"1, 2, 3","directivesHeader":"d1 d1_value; d2 d2a d2b"}');
+  t.equals(res.toString(), '{"simpleHeader":"bar","listHeader":"1, 2, 3","Feature-Policy":"vibrate \'none\'; geolocation \'self\'"}');
   t.end();
 });
 
