@@ -1,8 +1,7 @@
 
 
 /**
- * Basic header whose value is a single String
- * also serves as subclass for fancier headers
+ * Base class, plus static methods and factories
  */
 
 class Header {
@@ -111,6 +110,11 @@ class Value extends Header {
 }
 
 
+/**
+ * Header consisting of a single UTC Date
+ *   Automatically puts in current date if value == 0 (or null)
+ *   e.g. "Expires"
+ */
 class DateValue extends Value {
 
   toStr() {
@@ -123,7 +127,7 @@ class DateValue extends Value {
 
 /**
  * A header consisting of multiple semicolon delimited Policies
- *   each with a name and a list of space delimited values
+ *   Each Policy has a name and a list of space delimited values
  *   e.g. Content-Security-Policy
  */
 
@@ -136,29 +140,29 @@ class Policies extends Header {
     this.set(data || {});
   }
 
-  add(directiveName, ...items) {
-    let directive = this.data[directiveName];
-    if (directive)
-      directive.push(...items);
+  add(policyName, ...items) {
+    let policyValues = this.data[policyName];
+    if (policyValues)
+      policyValues.push(...items);
     else
-      this.data[directiveName] = [...items];
+      this.data[policyName] = [...items];
 
     return this;
   }
 
-  clear(directiveName) {
-    if (directiveName)
-      delete this.data[directiveName];
+  clear(policyName) {
+    if (policyName)
+      delete this.data[policyName];
     else
-      this.data = {};  // todo super
+      this.data = {};
 
     return this;
   }
 
   set(values = {}) {
     this.data = {};
-    for (let directiveName of Object.keys(values)) {
-      this.add(directiveName, ...forceArray(values[directiveName]) );
+    for (let policyName of Object.keys(values)) {
+      this.add(policyName, ...forceArray(values[policyName]) );
     }
 
     return this;
@@ -166,20 +170,18 @@ class Policies extends Header {
 
   toStr() {
     let policies = Object.keys(this.data);
-    let dstrs = policies.map((dname) => {
-      let directive = this.data[dname];
-     // if (!Array.isArray(directive))
-     //   directive = [];
-      let s = directive.join(this.options.delimiter_intra || " ");
-      return s ? dname + ' ' + s : dname;
+    let policyStrings = policies.map((policyName) => {
+      let policyValues = this.data[policyName];
+      let s = policyValues.join(this.options.delimiter_intra || " ");
+      return s ? policyName + ' ' + s : policyName;
     });
-    return dstrs.join(this.options.delimiter_inter || "; ");
+    return policyStrings.join(this.options.delimiter_inter || "; ");
    }
 
 }
 
 /**
- * A header consisting of multiple comma delimited values
+ * A header consisting of multiple values, usually comma delimited
  *   e.g. Access-Control-Allow-Methods
  */
 class List extends Header {

@@ -1,15 +1,15 @@
 
+# Kepi is a small, elegant, and dependency free library for setting HTTP response headers.
+
 <div align="center">
 	<br>
 	<div>
-		<img width="600" height="600" src="kepi.svg" alt="kepi">
+		<img width="400" height="400" src="kepi.svg" alt="kepi">
 	</div>
 	<br>
 	<br>
 	<br>
 </div>
-
-# Kepi is a small, elegant, and dependency free library for setting HTTP response headers.
 
 [![Build Status](https://secure.travis-ci.org/MorganConrad/kepi.png)](http://travis-ci.org/MorganConrad/kepi)
 [![License](http://img.shields.io/badge/license-MIT-A31F34.svg)](https://github.com/MorganConrad/kepi)
@@ -58,15 +58,17 @@ But sometimes you need to add stuff dynamically
  data can be
   - null
   - an Object (see example).  In may cases this is all you really need.
-  - "safe": same as calling safe()
+  - "safe": same as calling [safe()](#safe-1)
+
+ options are described under [Customization](#Customization) below
 
 #### applyTo(response)
 Write the headers into response
 
 #### header(headerName, optionalData)
-Retrieve the Header with that name, setting with optional data.  Name may be
+Retrieve the Header with that name, creating if necessary, setting with optional data.  Name may be
  - the full name, e.g. "Content-Security-Policy"
- - a "nickname", e.g. "contentSecurityPolicy"
+ - a "nickname", e.g. "contentSecurityPolicy" (see [Customization](#customization))
 
 #### middleware()
 For use in Express.  Should be modifiable for others
@@ -74,19 +76,39 @@ For use in Express.  Should be modifiable for others
 #### safe()
 Sets all headers in options.SAFE or options.safe, creating if needed.
 
-### Header (subclasses are SimpleString, List, and Directives)
+### Header - base class for the following subclasses
+
+#### Value
+ - a single value (usually a String)
+ - _e.g._ Transfer-Encoding
+
+#### DateValue
+ - a single Date,
+ - _e.g._ Expires
+ - numbers get converted to a Date, null or 0 to current date.
+
+#### List
+ - a list of values, usually comma delimited (but sometimes semicolon)
+ - _e.g._ Content-Encoding (comma) or Strict-Transport-Security (semicolon)
+
+#### Policies
+ - one or more semicolon delimited Policies
+ - each Policy consists of a name and space delimited values.
+ - _e.g._ Content-Security-Policy
+
+#### Header Methods
 
 #### add(data)
 Adds data to the header value
   - `List.add(...items)` accepts a single value or an array
-  - `Directives.add(directiveName, ...items)` requires a directive name first
+  - `Policies.add(policyName, ...items)` requires a policy name first
 
 #### applyTo(response)
-Write the header to the response.
+Write the header to the response.  You will seldom call this directly.
 
 #### clear()
 Clear the value, to "", [], or {} as appropriate
-  - `Directives.clear(directiveName)` takes an optional directive name, if provided, only that directive is cleared.
+  - `Policies.clear(policyName)` takes an optional policy name, if provided, only that policy is cleared.
 
 #### remove()
 Flags this header to be removed from any response.  **Warning:** cannot be "unflagged".
@@ -101,6 +123,16 @@ Sets the value
 
 ## Customization
 
+You can customize or add to behavior by passing a customOptions parameter to the Kepi function.
+This will get `Object.assign`ed onto the default settings in defaults.js.
+
+Since `Object.assign` is shallow, and making a deep copy is a bit of a pain, instead, provide user options in the **lowercase**
+properties given at the end of defaults.js.
+
+ - headerClasses allows you to add or override the class for a Header
+ - nicknames lets you add nickname shortcuts (but see `setupNicknames`)
+   - _e.g._ you can use `kepi.featurePolicy()` instead of `kepi.header("Feature-Policy")`
+ - safe allows you to add or override the "security safe" values for headers
 
 
 ## Notes, Todos, and Caveats

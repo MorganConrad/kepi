@@ -4,8 +4,8 @@ const Header = require('./header').Header;
 
 class Kepi {
 
-  constructor(data, options) {
-    this.options = Object.assign({}, DEFAULTS, options);
+  constructor(data, customOptions) {
+    this.options = Object.assign({}, DEFAULTS, customOptions);
     this.headers = {};
 
     if (this.options.setupNicknames) {

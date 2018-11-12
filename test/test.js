@@ -186,3 +186,31 @@ test('errors', function(t) {
 
   t.end();
 });
+
+test('customization', function(t) {
+  let customOptions = {
+    headerClasses: {
+      "X-Super-Cool-List": "list;",
+      "X-Super-Cool-Policies": "Policies",
+      "X-Date": "DATE"
+    },
+    nicknames: {
+      xscl: "X-Super-Cool-List"
+    },
+    safe: {
+      "X-Super-Cool-List": ["safe", "at", "home"]
+    },
+  }
+  let kepi = Kepi({
+    "X-Super-Cool-Policies": { pissInTheWind: "don't", "of-truth" : "faithfully pursue" }
+    },
+    customOptions);
+  kepi.xscl().safe();
+  kepi.header("X-Date").set(1);
+  let res = mockResponse();
+
+  kepi.applyTo(res);
+  t.equals(res.toString(), '{"X-Super-Cool-Policies":"pissInTheWind don\'t; of-truth faithfully pursue","X-Super-Cool-List":"safe; at; home","X-Date":"Thu, 01 Jan 1970 00:00:00 GMT"}');
+  t.end();
+
+});
