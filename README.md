@@ -49,6 +49,9 @@ But sometimes you need to add stuff dynamically
 
     app.use(kepi.middleware());
 
+### If you just want to mimic (more or less) [helmet](https://www.npmjs.com/package/helmet)
+
+    app.use(kepi().safe().middleware());
 
 ## API
 

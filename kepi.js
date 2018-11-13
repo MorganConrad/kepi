@@ -24,7 +24,8 @@ class Kepi {
     let headerNames = Object.keys(this.headers);
     headerNames.forEach( (headerName) => {
       this.headers[headerName].applyTo(response);
-    });
+    });   
+    return this;
   }
 
 
@@ -52,7 +53,8 @@ class Kepi {
     let allSafe = Object.assign({}, this.options.SAFE, this.options.safe);
     Object.keys(allSafe).forEach( (headerName) => {
       this.header(headerName).safe();
-    });
+    });    
+    return this;
   }
 
   _fullName(name) {
