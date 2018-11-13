@@ -15,7 +15,6 @@ const DEFAULTS = {
     "Content-Security-Policy": "Policies",
     "Content-Security-Policy-Report_Only": "Policies",
     "Content-Type": "List;",
-    "Content-Type-Options": "Value",
     "Date": "Date",
     "ETag": "Value",
     "Expect-CT": "List,",
@@ -34,6 +33,7 @@ const DEFAULTS = {
     "Warning": "Value",
     "WWW-Authenticate": "List,",
 
+    "X-Content-Type-Options": "Value",
     "X-DNS-Prefetch-Control": "Value",
     "X-Download-Options": "Value",
     "X-Frame-Options": "Value",
@@ -57,8 +57,8 @@ const DEFAULTS = {
     "X-DNS-Prefetch-Control": "off",
     "X-Frame-Options": "SAMEORIGIN",
     "Strict-Transport-Security": ["max-age=5184000", "includeSubDomains"],
-    "X-Download-Options": "noopen",
-    "Content-Type-Options": "nosniff",
+    "X-Content-Type-Options": "nosniff",
+    "X-Download-Options": "noopen",    
     "X-XSS-Protection": [1, "mode=block"],
   },
 

@@ -79,7 +79,7 @@ test('List;', function(t) {
 });
 
 
-const SAFE_STRING = '{"Content-Security-Policy":"default-src \'self\'","X-Permitted-Cross-Domain-Policies":"\'none\'","X-DNS-Prefetch-Control":"off","X-Frame-Options":"SAMEORIGIN","Strict-Transport-Security":"max-age=5184000; includeSubDomains","X-Download-Options":"noopen","Content-Type-Options":"nosniff","X-XSS-Protection":"1; mode=block"}';
+const SAFE_STRING = '{"Content-Security-Policy":"default-src \'self\'","X-Permitted-Cross-Domain-Policies":"\'none\'","X-DNS-Prefetch-Control":"off","X-Frame-Options":"SAMEORIGIN","Strict-Transport-Security":"max-age=5184000; includeSubDomains","X-Content-Type-Options":"nosniff","X-Download-Options":"noopen","X-XSS-Protection":"1; mode=block"}';
 
 test('allsafe', function(t) {
   let kepi = Kepi('safe');
