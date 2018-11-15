@@ -59,9 +59,10 @@ test('List,', function(t) {
 
   kepi.header("WWW-Authenticate").set().add('Basic').add('charset="UTF-8"');
   kepi.header("Content-Encoding").set(['a', 'b']).clear();
+  kepi.header("Access-Control-Allow-Methods").set('GET','PUT');
 
   kepi.applyTo(res);
-  t.equals(res.toString(), '{"WWW-Authenticate":"Basic, charset=\\"UTF-8\\""}');
+  t.equals(res.toString(), '{"WWW-Authenticate":"Basic, charset=\\"UTF-8\\"","Access-Control-Allow-Methods":"GET, PUT"}');
   t.end();
 });
 
@@ -72,9 +73,11 @@ test('List;', function(t) {
 
   kepi.header("Content-Disposition").set().add('attachment', 'filename="cool.html"');
   kepi.header("Content-Type", ['text/html', 'charset=utf-8']).clear();
+  kepi.header("Access-Control-Allow-Methods").add(['GET','PUT']);  // was a bug in 0.1.0
+  kepi.header("Content-Type").set(['abc','def']);
 
   kepi.applyTo(res);
-  t.equals(res.toString(), '{"Content-Disposition":"attachment; filename=\\"cool.html\\""}');
+  t.equals(res.toString(), '{"Content-Disposition":"attachment; filename=\\"cool.html\\"","Content-Type":"abc; def","Access-Control-Allow-Methods":"GET, PUT"}');
   t.end();
 });
 
@@ -102,7 +105,7 @@ test('somesafe', function(t) {
 });
 
 
-const BIG_STRING3 = '{"X-DNS-Prefetch-Control":"test-dnsPrefetchControl","Access-Control-Allow-Methods":"PUT, POST, DELETE","Feature-Policy":"foo foo1 foo2; bar bar1"}';
+const BIG_STRING3 = '{"X-DNS-Prefetch-Control":"test-dnsPrefetchControl","Access-Control-Allow-Methods":"PUT, POST, DELETE","Feature-Policy":"foo foo1 foo2 foo3; bar bar1"}';
 
 
 test('delete', function(t) {
@@ -114,7 +117,7 @@ test('delete', function(t) {
   t.end();
 })
 
-const CLEAR_AND_ADD = '{"stringHeader":"addedstring","listHeader":"a,b,c","directiveHeader1":"foo1 newValue1,newValue2","directiveHeader2":"bar2 originalbarValue2; foo3 newfoovalue3"}';
+const CLEAR_AND_ADD = '{"stringHeader":"addedstring","listHeader":"a, b, c","directiveHeader1":"foo1 newValue1 newValue2","directiveHeader2":"bar2 originalbarValue2; foo3 newfoovalue3"}';
 
 test('clear & add', function(t) {
   let kepi = Kepi({
@@ -145,8 +148,8 @@ test('headers', function(t) {
   kepi.accessControl.allowMethods().add('PUT', 'POST');
   kepi.accessControl.allowMethods().add('DELETE');
   kepi.header('Feature-Policy').add('foo', "foo1");
-  kepi.header('Feature-Policy').add('foo', "foo2");
-  kepi.header('Feature-Policy').add('bar', "bar1");
+  kepi.header('Feature-Policy').add('foo', "foo2", "foo3");
+  kepi.header('Feature-Policy').add('bar', ["bar1"]);
   kepi.header('Feature-Policy').add('removeLater', "shouldBeRemoved");
   kepi.header('Feature-Policy').clear('removeLater');
 

@@ -49,7 +49,7 @@ class Header {
 
     switch (typeName.toUpperCase()) {
       case "DATE":     return { clazz: DateValue };
-      case "LIST,":    return { clazz: List };
+      case "LIST,":    return { clazz: List, delimiter: ', ' };
       case "LIST;":    return { clazz: List, delimiter: '; ' };
       case "POLICIES": return { clazz: Policies };
       case "VALUE":    return { clazz: Value };
@@ -78,7 +78,7 @@ class Header {
     if (nameInfo.clazz && dataInfo.clazz && (nameInfo.clazz !== dataInfo.clazz))
       throw new Error(`Header ${fullName} expects type ${nameInfo.clazz.name} but data is type ${dataInfo.clazz.name}`);
 
-    options.delimiter = options.delimiter || nameInfo.delimiter;
+    options.delimiter = nameInfo.delimiter;
 
     let Clazz = nameInfo.clazz || dataInfo.clazz || Value;
 
@@ -141,6 +141,7 @@ class Policies extends Header {
   }
 
   add(policyName, ...items) {
+    items = expandFirstArgIfArray(items);
     let policyValues = this.data[policyName];
     if (policyValues)
       policyValues.push(...items);
@@ -194,12 +195,12 @@ class List extends Header {
   }
 
   add(...items) {
-    this.data.push(...items);
+    this.data.push(...expandFirstArgIfArray(items));
     return this;
   }
 
-  set(items = []) {
-    this.data = [...items];
+  set(...items) {
+    this.data = [...expandFirstArgIfArray(items)];
     return this;
   }
 
@@ -214,5 +215,8 @@ function forceArray(x) {
     return x ? [x] : [];
 }
 
+function expandFirstArgIfArray(rest) {
+  return (rest.length === 1) && Array.isArray(rest[0]) ? rest[0] : rest;
+}
 
 module.exports = { Header };

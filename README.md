@@ -103,8 +103,10 @@ Sets all headers in options.SAFE or options.safe, creating if needed.
 
 #### add(data)
 Adds data to the header value
-  - `List.add(...items)` accepts a single value or an array
+  - `List.add(...items)` for convenience, accepts an array, **or** one or more individual items
+    - _e.g._ `add('a','b')` is equivalent to `add(['a','b'])`
   - `Policies.add(policyName, ...items)` requires a policy name first
+    - `...items` may be an array, **or** one or more individual items
 
 #### applyTo(response)
 Write the header to the response.  You will seldom call this directly.
@@ -121,7 +123,7 @@ Set the header to a "safe" value, as provided in the options.
 
 #### set(value)
 Sets the value
-
+  - `List.set(...items)` like add(), this accepts an array, or one or more individual items
 
 
 ## Customization
