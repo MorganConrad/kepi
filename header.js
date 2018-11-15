@@ -141,7 +141,7 @@ class Policies extends Header {
   }
 
   add(policyName, ...items) {
-    items = expandFirstArgIfArray(items);
+    items = flatten1(items);
     let policyValues = this.data[policyName];
     if (policyValues)
       policyValues.push(...items);
@@ -195,12 +195,12 @@ class List extends Header {
   }
 
   add(...items) {
-    this.data.push(...expandFirstArgIfArray(items));
+    this.data.push(...flatten1(items));
     return this;
   }
 
   set(...items) {
-    this.data = [...expandFirstArgIfArray(items)];
+    this.data = [...flatten1(items)];
     return this;
   }
 
@@ -215,8 +215,9 @@ function forceArray(x) {
     return x ? [x] : [];
 }
 
-function expandFirstArgIfArray(rest) {
-  return (rest.length === 1) && Array.isArray(rest[0]) ? rest[0] : rest;
+// 1 level deep flatten
+function flatten1(arr) {
+  return [].concat(...arr);
 }
 
 module.exports = { Header };

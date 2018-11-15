@@ -5,26 +5,28 @@ const Header = require('./header').Header;
 class Kepi {
 
   constructor(data, customOptions) {
+    data = data || {};
     this.options = Object.assign({}, DEFAULTS, customOptions);
-    this.headers = {};
+    this.resetData = this.options.resetAfterApply ? data : null;
 
     if (this.options.setupNicknames) {
       this._setupNicknames(this.options.NICKNAMES);
       this._setupNicknames(this.options.nicknames);
     }
 
-    if (data === 'safe')
-      this.safe();
-    else
-      this._setInitialData(data || {});
+    this._setData(data);
   }
+
 
 
   applyTo(response) {
     let headerNames = Object.keys(this.headers);
     headerNames.forEach( (headerName) => {
       this.headers[headerName].applyTo(response);
-    });   
+    });
+    if (this.resetData)
+      this._setData(this.resetData);
+
     return this;
   }
 
@@ -69,12 +71,18 @@ class Kepi {
   }
 
 
-  _setInitialData(data) {
+  _setData(data) {
+    this.headers = {};
+
+    if (data === 'safe')
+      return this.safe();
+
     let headerNames = Object.keys(data);
     headerNames.forEach( (headerName) => {
       let fullName = this._fullName(headerName);
       this.headers[headerName] = Header.create(this._headerType(fullName), fullName, data[headerName], this.options);
     });
+    return this;
   }
 
 

@@ -57,7 +57,7 @@ But sometimes you need to add stuff dynamically
 
 ### Kepi
 
-#### constructor(data, options)
+#### constructor(data, customOptions)
  data can be
   - null
   - an Object (see example).  In may cases this is all you really need.
@@ -103,10 +103,10 @@ Sets all headers in options.SAFE or options.safe, creating if needed.
 
 #### add(data)
 Adds data to the header value
-  - `List.add(...items)` for convenience, accepts an array, **or** one or more individual items
+  - `List.add(...items)`
     - _e.g._ `add('a','b')` is equivalent to `add(['a','b'])`
   - `Policies.add(policyName, ...items)` requires a policy name first
-    - `...items` may be an array, **or** one or more individual items
+  - **note** items will be flattened one level deep, so `add('a','b')` is equivalent to `add(['a','b'])`
 
 #### applyTo(response)
 Write the header to the response.  You will seldom call this directly.
@@ -123,7 +123,7 @@ Set the header to a "safe" value, as provided in the options.
 
 #### set(value)
 Sets the value
-  - `List.set(...items)` like add(), this accepts an array, or one or more individual items
+  - `List.set(...items)` like add(), items will be flattened
 
 
 ## Customization
@@ -131,7 +131,12 @@ Sets the value
 You can customize or add to behavior by passing a customOptions parameter to the Kepi function.
 This will get `Object.assign`ed onto the default settings in defaults.js.
 
-Since `Object.assign` is shallow, and making a deep copy is a bit of a pain, instead, provide user options in the **lowercase**
+#### Simple Options
+  - setupNicknames (default = true) controls if nicknames are setup
+  - resetAfterApply (default = false) will reset to initial data after calling applyTo()
+
+#### Complex Options
+Since `Object.assign` is shallow, and making a deep copy is a bit of a pain, instead, provide complex user options in the **lowercase**
 properties given at the end of defaults.js.
 
  - headerClasses allows you to add or override the class for a Header

@@ -118,14 +118,17 @@ test('delete', function(t) {
 })
 
 const CLEAR_AND_ADD = '{"stringHeader":"addedstring","listHeader":"a, b, c","directiveHeader1":"foo1 newValue1 newValue2","directiveHeader2":"bar2 originalbarValue2; foo3 newfoovalue3"}';
+const CLEAR_AND_ADD_AFTER_RESET = '{"stringHeader":"originalstring","listHeader":"1, 2, 3","directiveHeader1":"foo1 originalfooValue1; bar1 originalbarValue1","directiveHeader2":"foo2 originalfooValue2; bar2 originalbarValue2"}';
 
-test('clear & add', function(t) {
+test('clear & add & reset', function(t) {
   let kepi = Kepi({
     stringHeader: 'originalstring',
     listHeader: [1,2,3],
     directiveHeader1: { foo1: 'originalfooValue1', bar1: 'originalbarValue1'},
     directiveHeader2: { foo2: 'originalfooValue2', bar2: 'originalbarValue2'}
-  });
+  },
+  { resetAfterApply: true }
+  );
   let res = mockResponse();
 
   kepi.header('stringHeader').clear().add('addedstring');
@@ -135,6 +138,11 @@ test('clear & add', function(t) {
 
   kepi.applyTo(res);
   t.equals(res.toString(), CLEAR_AND_ADD);
+
+  res = mockResponse();
+  kepi.applyTo(res);
+  t.equals(res.toString(), CLEAR_AND_ADD_AFTER_RESET);
+
   t.end();
 })
 
