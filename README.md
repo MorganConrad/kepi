@@ -22,7 +22,7 @@
 
 ### Example Configuration
 
-Simplest is to have as much as possible in a constant object
+Simplest is to have as much as possible in a constant object ("declarative")
 
     const Kepi = require('kepi');
 
@@ -35,7 +35,11 @@ Simplest is to have as much as possible in a constant object
       },
     });
 
-But sometimes you need to add stuff dynamically
+Later, you can add more headers declaratively
+
+    kepi.add( {Content-Encoding: ['deflate', 'gzip']} );
+
+But sometimes you just need to add stuff dynamically
 
     let methodArray = [ insert methods you allow here ]
     kepi.accessControl.allowMethods().add(...methodArray);
@@ -60,13 +64,16 @@ But sometimes you need to add stuff dynamically
 #### constructor(data, customOptions)
  data can be
   - null
-  - an Object (see example).  In may cases this is all you really need.
+  - an Object (see [example](#example-configuration) above).  In may cases this is all you really need.
   - "safe": same as calling [safe()](#safe-1)
 
- options are described under [Customization](#Customization) below
+ customOptions are described under [Customization](#Customization) below
+
+#### add(data)
+Add that data object to the headers.  (same logic as for constructor, including "safe")
 
 #### applyTo(response)
-Write the headers into response
+Write the headers into response.
 
 #### header(headerName, optionalData)
 Retrieve the Header with that name, creating if necessary, setting with optional data.  Name may be
@@ -105,7 +112,9 @@ Sets all headers in options.SAFE or options.safe, creating if needed.
 Adds data to the header value
   - `List.add(...items)`
     - _e.g._ `add('a','b')` is equivalent to `add(['a','b'])`
-  - `Policies.add(policyName, ...items)` requires a policy name first
+  - `Policies.add(policyNameorData, ...items)`
+    - if first argument is a String, adds items to that policyNae
+    - else parses policyNameorData as a data object
   - **note** items will be flattened one level deep, so `add('a','b')` is equivalent to `add(['a','b'])`
 
 #### applyTo(response)
@@ -142,6 +151,7 @@ properties given at the end of defaults.js.
  - headerClasses allows you to add or override the class for a Header
  - nicknames lets you add nickname shortcuts (but see `setupNicknames`)
    - _e.g._ you can use `kepi.featurePolicy()` instead of `kepi.header("Feature-Policy")`
+     - **Note**: Unlike in **helmet**, you must add parentheses at the end.
  - safe allows you to add or override the "security safe" values for headers
 
 
@@ -150,5 +160,3 @@ properties given at the end of defaults.js.
 This work was inspired when I ran a [Security Header Audit](https://securityheaders.com/) on one of my websites and got back a lot of angry red.  This quickly lead me to [helmet](https://www.npmjs.com/package/helmet), a popular, well tested, and well documented Express middleware.  However, helmet really only sets "secure" headers, and is of little use setting general purpose response headers.  It has a many dependencies and sucks down a lot of code.
 
 To my surprise, I didn't see any general purpose "setup your response headers" npm module.  This is my attempt to fill that need.
-
-

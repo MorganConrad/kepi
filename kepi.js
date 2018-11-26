@@ -8,15 +8,33 @@ class Kepi {
     data = data || {};
     this.options = Object.assign({}, DEFAULTS, customOptions);
     this.resetData = this.options.resetAfterApply ? data : null;
+    this.headers = {};
 
     if (this.options.setupNicknames) {
       this._setupNicknames(this.options.NICKNAMES);
       this._setupNicknames(this.options.nicknames);
     }
 
-    this._setData(data);
+    this.add(data);
   }
 
+
+  add(data) {
+    if (data === 'safe')
+      return this.safe();
+
+    let headerNames = Object.keys(data);
+    headerNames.forEach( (headerName) => {
+      let fullName = this._fullName(headerName);
+
+      if (this.headers[headerName])
+        this.headers[headerName].add(data[headerName]);
+      else
+        this.headers[headerName] = Header.create(this._headerType(fullName), fullName, data[headerName], this.options);
+    });
+
+    return this;
+  }
 
 
   applyTo(response) {
@@ -24,8 +42,10 @@ class Kepi {
     headerNames.forEach( (headerName) => {
       this.headers[headerName].applyTo(response);
     });
-    if (this.resetData)
-      this._setData(this.resetData);
+    if (this.resetData) {
+      this.headers = {};
+      this.add(this.resetData);
+    }
 
     return this;
   }
@@ -55,7 +75,7 @@ class Kepi {
     let allSafe = Object.assign({}, this.options.SAFE, this.options.safe);
     Object.keys(allSafe).forEach( (headerName) => {
       this.header(headerName).safe();
-    });    
+    });
     return this;
   }
 
@@ -68,21 +88,6 @@ class Kepi {
 
   _headerType(fullName) {
     return this.options.headerClasses[fullName] || this.options.HEADER_CLASSES[fullName];
-  }
-
-
-  _setData(data) {
-    this.headers = {};
-
-    if (data === 'safe')
-      return this.safe();
-
-    let headerNames = Object.keys(data);
-    headerNames.forEach( (headerName) => {
-      let fullName = this._fullName(headerName);
-      this.headers[headerName] = Header.create(this._headerType(fullName), fullName, data[headerName], this.options);
-    });
-    return this;
   }
 
 

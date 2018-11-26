@@ -117,7 +117,7 @@ test('delete', function(t) {
   t.end();
 })
 
-const CLEAR_AND_ADD = '{"stringHeader":"addedstring","listHeader":"a, b, c","directiveHeader1":"foo1 newValue1 newValue2","directiveHeader2":"bar2 originalbarValue2; foo3 newfoovalue3"}';
+const CLEAR_AND_ADD = '{"stringHeader":"addedstring.added","listHeader":"a, b, c, 4","directiveHeader1":"foo1 newValue1 newValue2","directiveHeader2":"bar2 originalbarValue2; foo3 newfoovalue3 3; foo4 4","addedHeader1":"addedHeader1"}';
 const CLEAR_AND_ADD_AFTER_RESET = '{"stringHeader":"originalstring","listHeader":"1, 2, 3","directiveHeader1":"foo1 originalfooValue1; bar1 originalbarValue1","directiveHeader2":"foo2 originalfooValue2; bar2 originalbarValue2"}';
 
 test('clear & add & reset', function(t) {
@@ -135,6 +135,10 @@ test('clear & add & reset', function(t) {
   kepi.header('listHeader').clear().add(['a','b','c']);
   kepi.header('directiveHeader1').clear().add('foo1', ['newValue1', 'newValue2']);
   kepi.header('directiveHeader2').clear('foo2').add('foo3', ['newfoovalue3']);
+  kepi.add({addedHeader1: "addedHeader1",
+            listHeader: 4,
+            stringHeader: ".added",
+            directiveHeader2: {foo3: 3, foo4: 4, }});
 
   kepi.applyTo(res);
   t.equals(res.toString(), CLEAR_AND_ADD);

@@ -30,7 +30,7 @@ class Header {
   remove() { this.doRemove = true; }
 
   safe() {
-    let value = this.options.safe[this.fullName] || this.options.SAFE[this.fullName];
+    let value = or(this.options.safe[this.fullName], this.options.SAFE[this.fullName]);
     return this.set(value);
   }
 
@@ -140,14 +140,21 @@ class Policies extends Header {
     this.set(data || {});
   }
 
-  add(policyName, ...items) {
-    items = flatten1(items);
-    let policyValues = this.data[policyName];
-    if (policyValues)
-      policyValues.push(...items);
-    else
-      this.data[policyName] = [...items];
-
+  add(policyNameOrObject, ...items) {
+    if (typeof policyNameOrObject === 'string') {
+      let policyName = policyNameOrObject;
+      items = flatten1(items);
+      let policyValues = this.data[policyName];
+      if (policyValues)
+        policyValues.push(...items);
+      else
+        this.data[policyName] = [...items];
+    }
+    else {
+      for (let policyName of Object.keys(policyNameOrObject)) {
+        this.add(policyName, ...forceArray(policyNameOrObject[policyName]) );
+      }
+    }
     return this;
   }
 
@@ -162,9 +169,7 @@ class Policies extends Header {
 
   set(values = {}) {
     this.data = {};
-    for (let policyName of Object.keys(values)) {
-      this.add(policyName, ...forceArray(values[policyName]) );
-    }
+    this.add(values);
 
     return this;
   }
@@ -173,10 +178,10 @@ class Policies extends Header {
     let policies = Object.keys(this.data);
     let policyStrings = policies.map((policyName) => {
       let policyValues = this.data[policyName];
-      let s = policyValues.join(this.options.delimiter_intra || " ");
+      let s = policyValues.join(or(this.options.delimiter_intra, " "));
       return s ? policyName + ' ' + s : policyName;
     });
-    return policyStrings.join(this.options.delimiter_inter || "; ");
+    return policyStrings.join(or(this.options.delimiter_inter, "; "));
    }
 
 }
@@ -204,7 +209,7 @@ class List extends Header {
     return this;
   }
 
-  toStr() { return this.data.join(this.options.delimiter || ', '); }
+  toStr() { return this.data.join(or(this.options.delimiter, ', ')); }
 }
 
 
@@ -218,6 +223,11 @@ function forceArray(x) {
 // 1 level deep flatten
 function flatten1(arr) {
   return [].concat(...arr);
+}
+
+// find first non-null, more robust than x || DEFAULT
+function or(...items) {
+  return items.find((x) => x != null);
 }
 
 module.exports = { Header };
