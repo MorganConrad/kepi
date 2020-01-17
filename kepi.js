@@ -19,12 +19,16 @@ class Kepi {
   }
 
 
+  /**
+   * add to existing headers, creating if necessary
+   * @param {*} data  "safe", or a { } of key/value pairs.
+   */
   add(data) {
     if (data === 'safe')
       return this.safe();
 
     let headerNames = Object.keys(data);
-    headerNames.forEach( (headerName) => {
+    headerNames.forEach((headerName) => {
       let fullName = this._fullName(headerName);
 
       if (this.headers[headerName])
@@ -37,9 +41,13 @@ class Kepi {
   }
 
 
+  /**
+   * Write the headers into the http.ServerResponse, and possibly reset
+   * @param {*} response  http.ServerResponse
+   */
   applyTo(response) {
     let headerNames = Object.keys(this.headers);
-    headerNames.forEach( (headerName) => {
+    headerNames.forEach((headerName) => {
       this.headers[headerName].applyTo(response);
     });
     if (this.resetData) {
@@ -50,7 +58,11 @@ class Kepi {
     return this;
   }
 
-
+/**
+ * Find the header, creating if needed
+ * @param {string} headerName
+ * @param {*} data   only used if creating
+ */
   header(headerName, data = undefined) {
     let fullName = this._fullName(headerName);
     let header = this.headers[fullName];
@@ -62,7 +74,21 @@ class Kepi {
     return header;
   }
 
+/**
+ * Creates micro "middleware"
+ * @param {*} handler
+ */
+  micro(handler) {
+    let kepi = this;
+    return function(req, res, ...restArgs) {
+      kepi.applyTo(res);
+      return handler(req, res, ...restArgs)
+    }
+  }
 
+/**
+ * Creates express middleware.  Usually used via  `app.use(kepi.middleware());`
+ */
   middleware() {
     let kepi = this;
     return function(req, res, next) {
@@ -71,9 +97,10 @@ class Kepi {
     }
   }
 
+
   safe() {
     let allSafe = Object.assign({}, this.options.SAFE, this.options.safe);
-    Object.keys(allSafe).forEach( (headerName) => {
+    Object.keys(allSafe).forEach((headerName) => {
       this.header(headerName).safe();
     });
     return this;
@@ -92,7 +119,7 @@ class Kepi {
 
 
   _setupNicknames(data, where = this) {
-    Object.keys(data).forEach( (nickname) => {
+    Object.keys(data).forEach((nickname) => {
       let value = data[nickname];
       if (typeof value === 'string')
         where[nickname] = () => this.header(value);

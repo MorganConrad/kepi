@@ -7,8 +7,9 @@ const Defaults = require("../defaults");
 
 function mockResponse(data) {
   const _data = data || {};
-
+  
   return {
+    end: (x) => { _data.body = x},
     setHeader: (name, s) => { _data[name] = s; },
     removeHeader: (name) => { delete _data[name]; },
     toString: () => {
@@ -186,6 +187,12 @@ test('rawdata', function(t) {
   kepi.middleware()(null, res, () => null);
   // kepi.applyTo(res);
   t.equals(res.toString(), '{"simpleHeader":"bar","listHeader":"1, 2, 3","Feature-Policy":"vibrate \'none\'; geolocation \'self\'"}');
+  
+  res = mockResponse();
+  const microHandler = function(req, res, rest) { res.end(rest); };
+  kepi.micro(microHandler)(null, res, "hi there");
+  t.equals(res.toString(), '{"simpleHeader":"bar","listHeader":"1, 2, 3","Feature-Policy":"vibrate \'none\'; geolocation \'self\'","body":"hi there"}');
+  
   t.end();
 });
 

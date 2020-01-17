@@ -12,6 +12,11 @@ class Header {
     this.options = options;
   }
 
+  /**
+   *
+   * @param {*} response    http.ServerResponse @see  https://nodejs.org/api/http.html#http_class_http_serverresponse
+   * @param {*} headerName  usually null for this.fullName
+   */
   applyTo(response, headerName = this.fullName) {
     if (this.doRemove)
       response.removeHeader(headerName);
@@ -25,10 +30,19 @@ class Header {
     return this;
   }
 
+  /**
+   * Clears the header
+   */
   clear() { return this.set(); }
 
+  /**
+   * INdicaters that this header should be removed from the response
+   */
   remove() { this.doRemove = true; }
 
+  /**
+   * Set header to the "safe" value
+   */
   safe() {
     let value = or(this.options.safe[this.fullName], this.options.SAFE[this.fullName]);
     return this.set(value);
@@ -88,7 +102,7 @@ class Header {
 }
 
 /**
- * Basic header consisting of a single value
+ * Basic header consisting of a single string value
  */
 class Value extends Header {
 
@@ -97,6 +111,9 @@ class Value extends Header {
     super(fullName, data, opts);
   }
 
+  /**
+   * @param data   usually a string, gets appended to end
+   */
   add(data) {
     this.data += data;
     return this;
@@ -140,8 +157,13 @@ class Policies extends Header {
     this.set(data || {});
   }
 
+  /**
+   * Add a policy or policies.
+   * @param {*} policyNameOrObject    if a string, single policy
+   * @param  {...any} items           only relevant if single policy
+   */
   add(policyNameOrObject, ...items) {
-    if (typeof policyNameOrObject === 'string') {
+    if (typeof policyNameOrObject === 'string') {  // single policy
       let policyName = policyNameOrObject;
       items = flatten1(items);
       let policyValues = this.data[policyName];
@@ -152,12 +174,16 @@ class Policies extends Header {
     }
     else {
       for (let policyName of Object.keys(policyNameOrObject)) {
-        this.add(policyName, ...forceArray(policyNameOrObject[policyName]) );
+        this.add(policyName, ...forceArray(policyNameOrObject[policyName]) );  // recur
       }
     }
     return this;
   }
 
+  /**
+   * Clear one policy name, or clear all if policyName is falsy
+   * @param {string} policyName
+   */
   clear(policyName) {
     if (policyName)
       delete this.data[policyName];
@@ -168,7 +194,7 @@ class Policies extends Header {
   }
 
   set(values = {}) {
-    this.data = {};
+    this.data = {};    // clear old, then set
     this.add(values);
 
     return this;
@@ -176,10 +202,11 @@ class Policies extends Header {
 
   toStr() {
     let policies = Object.keys(this.data);
+    let delimiterIntra = or(this.options.delimiter_intra, " ");
     let policyStrings = policies.map((policyName) => {
       let policyValues = this.data[policyName];
-      let s = policyValues.join(or(this.options.delimiter_intra, " "));
-      return s ? policyName + ' ' + s : policyName;
+      let policyString = policyValues.join(delimiterIntra);
+      return policyString ? policyName + ' ' + policyString : policyName;
     });
     return policyStrings.join(or(this.options.delimiter_inter, "; "));
    }
@@ -212,6 +239,7 @@ class List extends Header {
   toStr() { return this.data.join(or(this.options.delimiter, ', ')); }
 }
 
+// utilities
 
 function forceArray(x) {
   if (Array.isArray(x))

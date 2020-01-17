@@ -53,9 +53,15 @@ But sometimes you just need to add stuff dynamically
 
     app.use(kepi.middleware());
 
-### If you just want to mimic (more or less) [helmet](https://www.npmjs.com/package/helmet)
+#### - If you just want to mimic (more or less) [helmet](https://www.npmjs.com/package/helmet)
 
     app.use(kepi().safe().middleware());
+    
+### In [Micro](https://github.com/zeit/micro)  (note: not tested in a real app!)
+
+    originalMicroHandler = (req, res) => { ... }
+    module.exports = kepi.micro(originalMicroHandler);
+    
 
 ## API
 
