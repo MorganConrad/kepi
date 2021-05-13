@@ -1,6 +1,6 @@
 {
   "name": "kepi",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "lightweight HTTP headers",
   "main": "kepi.js",
   "scripts": {
@@ -18,14 +18,14 @@
     "response"
   ],
   "devDependencies": {
-    "nyc": "^11.2.0",
-    "tape": "^4.6",
-    "coveralls": "^3.0"
+    "coveralls": "^3.1",
+    "nyc": "^15.1.0",
+    "tape": "^5.2"
   },
   "author": "Morgan Conrad <morgan@morganconrad.com> (http://morganconrad.com/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/MorganConrad/kepi/issues"
   },
-  "homepage": "https://github.com/MorganConrad/kepi#readme"
+  "homepage": "https://www.morganconrad.com/projects/kepi.html"
 }
