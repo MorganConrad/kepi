@@ -11,7 +11,7 @@
 	<br>
 </div>
 
-[![Build Status](https://secure.travis-ci.org/MorganConrad/kepi.png)](http://travis-ci.org/MorganConrad/kepi)
+[![Build Status](https://api.travis-ci.com/MorganConrad/kepi.png)](https://app.travis-ci.com/github/MorganConrad/kepi)
 [![License](http://img.shields.io/badge/license-MIT-A31F34.svg)](https://github.com/MorganConrad/kepi)
 [![NPM Downloads](http://img.shields.io/npm/dm/kepi.svg)](https://www.npmjs.org/package/kepi)
 [![Known Vulnerabilities](https://snyk.io/test/github/morganconrad/kepi/badge.svg)](https://snyk.io/test/github/morganconrad/kepi)
@@ -56,12 +56,12 @@ But sometimes you just need to add stuff dynamically
 #### - If you just want to mimic (more or less) [helmet](https://www.npmjs.com/package/helmet)
 
     app.use(kepi().safe().middleware());
-    
+
 ### In [Micro](https://github.com/zeit/micro)  (note: not tested in a real app!)
 
     originalMicroHandler = (req, res) => { ... }
     module.exports = kepi.micro(originalMicroHandler);
-    
+
 
 ## API
 
